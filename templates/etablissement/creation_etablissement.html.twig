@@ -1,0 +1,12 @@
+
+{% extends 'Layouts/base.html.twig' %}
+
+{% block title 'Nouvelle etablissement' %}
+{% block body%}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <h1>Crée un établissement</h1>
+        {{ include('etablissement/_form.html.twig',{submitButtonText:'Crée une etablissement'}) }}
+    </div>
+</div>
+{% endblock %}

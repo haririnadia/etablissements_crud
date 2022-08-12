@@ -1,0 +1,48 @@
+{% extends 'Layouts/base.html.twig'%}
+{% block title 'Etablissement'%}
+{% block body %}
+        {% if etab|length>0 %}
+        <h1 class="mb-4 text-center text-muted">{{pluralize(etab|length,'etablissement') }}</h1>
+<div class="container">
+    {% for row in etab|batch(3)  %}
+    <div class="row  mb-5 mt-3 mx-auto">
+        {% for etablissement in row %}
+            <div class=" col-sm-4 mb-3 rounded ">
+                <article class="bg-white rounded shadow">
+                    <div class=" overflow-hidden rounded-top">
+                        <h6 class="text-center mt-4 px-2">
+                            <strong class="degrade">Nom</strong>:</br>{{etablissement.nomEtablissement}}
+                        </h6>
+                        <h6 class="text-center mt-4 px-2">
+                            <strong class="degrade">Nature</strong>:</br>{{etablissement.natureEtablissement}} 
+                        </h6>
+                        <h6 class="text-center mt-4 px-2">
+                            <strong class="degrade">Secteur</strong>:</br>{{etablissement.secteurEtablissement}}
+                        </h6>
+                        
+                    </div>
+                    <div class="mt-3">
+                            <a type="button" class="d-block mx-lg  btn border-secondary btn-outline-primary" href="{{ path('app_etablissement_modification',{id:etablissement.id}) }}" >Modifier &#128736; </a>
+                        </div>
+                        <div class="mt-3">
+                            <a type="button" class="d-block mx-lg  btn btn-light btn-outline-danger ml-3"  href="{{ path('app_home') }}" onclick="event.preventDefault();confirm('Vous voulez vraiment supprimer cet établissement')&& document.getElementById('js-etablissement-delete-form-{{ etablissement.getId() }}').submit();">Supprimer&#128686;</a>
+                        </div>
+                        <div class="mt-3">
+                            <a type="button" class="d-block mx-lg  btn  border-secondary btn-outline-info"href="{{ path('app_etablissement_details',{id:etablissement.id}) }}">Détail de l'établissement 💬</a>
+                        </div>
+                        <form id="js-etablissement-delete-form-{{ etablissement.id }}" action="{{ path('app_etablissement_supprimer',{id:etablissement.id}) }}" method="post" style="display: none;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token('etablissement_deletion_'~ etablissement.getId()) }}">
+                            <input type="hidden" name="_method" Value="DELETE">
+                        </form>
+                </article>
+            </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+    {% else %}
+        <p class="h1 mt-5 text-center">Il n'y a pas encore d'établissement disponible <br>
+            
+    {% endif %}
+<a class=" d-block mx-lg btn btn-primary" style="margin: 0 auto; width: 500px;" href="{{ path('app_etablissement_creation') }}">Crée un établissement </a></p>
+{% endblock %}

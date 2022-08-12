@@ -1,0 +1,109 @@
+{% extends 'Layouts/base.html.twig'%}
+{% block title 'Detail de  L\'etablissement'~ etablissement.getId() %}
+{% block body %}
+</br>
+<h1>Détails sur l'établissement<h1>
+</br>
+<div class="row text-center">
+    <div class="col-6">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <h3 class="degrade">Identifiant:</h3><h6>{{ etablissement.id }}</h6>
+            <h3 class="degrade">Nom:</h3><h6>{{ etablissement.nomEtablissement }}</h6>
+            <h3 class="degrade">Nature:</h3><h6>{{ etablissement.natureEtablissement }}</h6>
+            <h3 class="degrade">Secteur:</h3><h6>{{ etablissement.secteurEtablissement }}</h6>
+            <h3 class="degrade">Latitude:</h3><h6>{{ etablissement.latitude}}</h6>
+            <h3 class="degrade">Longitude:</h3><h6>{{ etablissement.longitude}}</h6>
+        </p>
+    </div>
+    <div class="col-6">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <h3 class="degrade">Adresse:</h3><h6>{{ etablissement.adresse }}</h6>
+            <h3 class="degrade">Departement:</h3><h6>{{ etablissement.departement }}</h6>
+            <h3 class="degrade">Commune:</h3><h6>{{ etablissement.commune }}</h6>
+            <h3 class="degrade">Region:</h3><h6>{{ etablissement.region }}</h6>
+            <h3 class="degrade">Academie:</h3><h6>{{ etablissement.academie }}</h6>
+            <h3 class="degrade">Date ouverture:</h3><h6>{{ etablissement.getDateOUverture|date('Y-m-d') }}</h6>
+        </p>   
+    </div>
+</div>       
+</br></br>             
+<h1 class="lh-125 lh-125 border-bottom border-gray">Localisation<h1>
+    <div id="map" style="height: 500px;"></div>
+<h1>Liste des commentaires sur l'établissement</h1>
+    {% for comm in etablissement.getRelationEtablissement() %}
+<main role="main" class="container">
+    <div class="my-3 p-3 bg-white rounded box-shadow">
+        <h6 class="border-bottom border-gray pb-2 mb-0">Commentaire {{comm.id}}</h6>
+            <div class="media text-muted pt-3">
+                <img data-src="holder.js/32x32?theme=thumb&bg=007bff&fg=007bff&size=1" alt="" class="mr-2 rounded">
+                <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                      <strong class="d-block text-gray-dark">👤{{comm.getNomAuteur()}}</strong>
+                        {{comm.getText()}}
+                        </br>
+                        {% if comm.getNote() ==1 %}
+                            ⭐
+                        {% elseif comm.getNote() ==2 %}
+                            ⭐⭐
+                        {% elseif comm.getNote() ==3 %}
+                            ⭐⭐⭐
+                        {% elseif comm.getNote() ==4 %}
+                            ⭐⭐⭐⭐
+                        {% elseif comm.getNote() ==5 %}
+                            ⭐⭐⭐⭐⭐
+                        {% endif %}
+                         </br>
+                        <strong>{{comm.getDateCreation()|date('Y-m-d')}}</strong>
+                        </br>
+                        <a type="button"  class=" btn-block border-secondary btn-outline-primary" href="{{ path('app_commentaire_modification',{id:comm.id}) }}" >Modifier &#128736;|</a>
+                        <a type="button" class=" btn-block btn-light btn-outline-danger" href="{{ path('app_etablissement_details',{id:etablissement.id}) }}" onclick="event.preventDefault();confirm('Vous voulez vraiment supprimer ce commentaire')&& document.getElementById('js-formation-delete-form-{{ comm.id }}').submit();">Supprimer&#128686;</a>
+                                        <form id="js-formation-delete-form-{{ comm.id }}" action="{{ path('app_commentaire_supprimer',{id:comm.id}) }}" method="post" style="display: none;">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token('commentaire_deletion_'~ comm.id) }}">
+                                            <input type="hidden" name="_method" Value="DELETE">
+                                        </form>
+                </p>
+                
+             </div>
+    </div>
+</main>
+{% endfor %}    
+</br></br></br>
+<div class="row">
+    <div class="col">
+        <h1>Crée un commentaire</h1>
+        {{form_start(formulaire)}}
+        {{form_widget(formulaire)}}
+    <div>
+    
+    <input class=" d-block mx-lg btn btn-primary" style="margin: 0 auto; width: 500px;"  type="submit" value="crée un commentaire">
+    </div>
+    {{form_end(formulaire)}}
+    </div>
+</div>
+</br></br>
+
+{% endblock %}
+{% block javascripts %}
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+  crossorigin=""></script>
+
+<script> 
+let mymap
+let marker
+const meslatlong = {
+    lat:{{etablissement.latitude}},
+    lng:{{etablissement.longitude}},
+    nom:'{{etablissement.nomEtablissement}}'
+}
+window.onload = () => {
+mymap = L.map('map').setView([meslatlong.lat,meslatlong.lng],14)
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "carte fournie par wikimedia",
+      minZoom:1,
+      maxZoom:20
+    }).addTo(mymap)
+marker = L.marker([meslatlong.lat,meslatlong.lng]).addTo(mymap).bindPopup("<b>"+meslatlong.nom+"<br>").openPopup();
+}
+</script>
+
+{% endblock %}

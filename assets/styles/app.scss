@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import "shared/variables";
+@import "~bootstrap/scss/bootstrap";
+body {
+    font-family: $print-font, sans-serif;
+}
+
+.degrade {
+    background: linear-gradient(to right, #36ecde, #000);
+    text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.3);
+    margin-top: 20px;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.alert {
+    padding: 10px;
+    color: white;
+    text-align: center;
+    &.alert-success {
+        background-color: green;
+    }
+    &.alert-suppression {
+        background-color: red;
+    }
+    &.alert-updated {
+        background-color: blue;
+    }
+    &.alert-error {
+        background-color: red;
+    }
+}
